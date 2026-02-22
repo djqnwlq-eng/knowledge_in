@@ -1,0 +1,341 @@
+/* popup.css — 다크 테마 UI */
+
+@import url('https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;700&display=swap');
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  width: 420px;
+  max-height: 600px;
+  overflow-y: auto;
+  background: #0F0F0F;
+  color: #E0E0E0;
+  font-family: 'Noto Sans KR', sans-serif;
+  font-size: 13px;
+  line-height: 1.5;
+}
+
+.container {
+  padding: 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+/* 헤더 */
+.header {
+  text-align: center;
+  padding: 12px 0 4px;
+}
+
+.header-title {
+  font-size: 18px;
+  font-weight: 700;
+  color: #FFFFFF;
+}
+
+.header-sub {
+  font-size: 11px;
+  color: #888;
+  margin-top: 2px;
+}
+
+/* 카드 */
+.card {
+  background: #1A1A1A;
+  border: 1px solid #2A2A2A;
+  border-radius: 8px;
+  padding: 14px;
+}
+
+.card-header {
+  font-size: 13px;
+  font-weight: 700;
+  color: #FFFFFF;
+  margin-bottom: 10px;
+}
+
+.card-settings {
+  opacity: 0.85;
+}
+
+/* 버튼 */
+.btn {
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  font-family: 'Noto Sans KR', sans-serif;
+  font-size: 13px;
+  font-weight: 500;
+  padding: 10px 16px;
+  transition: opacity 0.2s, transform 0.1s;
+}
+
+.btn:hover {
+  opacity: 0.85;
+}
+
+.btn:active {
+  transform: scale(0.98);
+}
+
+.btn:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+  transform: none;
+}
+
+.btn-full {
+  width: 100%;
+}
+
+.btn-primary {
+  background: #03C75A;
+  color: #FFFFFF;
+}
+
+.btn-accent {
+  background: linear-gradient(135deg, #03C75A, #02a54b);
+  color: #FFFFFF;
+  font-weight: 700;
+  font-size: 14px;
+  padding: 12px 16px;
+}
+
+.btn-secondary {
+  background: #2A2A2A;
+  color: #E0E0E0;
+  border: 1px solid #3A3A3A;
+}
+
+.btn-danger {
+  background: #3A1A1A;
+  color: #FF4444;
+  border: 1px solid #552222;
+}
+
+.btn-small {
+  background: #2A2A2A;
+  color: #E0E0E0;
+  border: 1px solid #3A3A3A;
+  padding: 8px 14px;
+  font-size: 12px;
+}
+
+/* 상품 칩 */
+.product-chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.product-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 8px 14px;
+  background: #222;
+  border: 1px solid #3A3A3A;
+  border-radius: 20px;
+  color: #CCC;
+  font-size: 12px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.product-chip:hover {
+  border-color: #03C75A;
+  color: #FFF;
+}
+
+.product-chip.selected {
+  background: rgba(3, 199, 90, 0.15);
+  border-color: #03C75A;
+  color: #03C75A;
+  font-weight: 700;
+}
+
+.product-chip .chip-edit {
+  font-size: 10px;
+  opacity: 0.5;
+  cursor: pointer;
+}
+
+.product-chip .chip-edit:hover {
+  opacity: 1;
+}
+
+.product-chips-empty {
+  font-size: 12px;
+  color: #666;
+  text-align: center;
+  padding: 8px 0;
+}
+
+/* 상품 폼 */
+.product-form {
+  margin-top: 12px;
+}
+
+.form-actions {
+  display: flex;
+  gap: 8px;
+  margin-top: 10px;
+}
+
+.form-actions .btn {
+  flex: 1;
+}
+
+/* 폼 */
+.form-group {
+  margin-bottom: 10px;
+}
+
+.form-group label {
+  display: block;
+  font-size: 12px;
+  color: #AAA;
+  margin-bottom: 4px;
+}
+
+input[type="text"],
+input[type="url"],
+input[type="password"],
+textarea {
+  width: 100%;
+  background: #0F0F0F;
+  border: 1px solid #333;
+  border-radius: 6px;
+  color: #E0E0E0;
+  font-family: 'Noto Sans KR', sans-serif;
+  font-size: 12px;
+  padding: 8px 10px;
+  outline: none;
+  transition: border-color 0.2s;
+}
+
+input:focus,
+textarea:focus {
+  border-color: #03C75A;
+}
+
+textarea {
+  resize: vertical;
+  min-height: 60px;
+}
+
+/* API 키 행 */
+.api-row {
+  display: flex;
+  gap: 8px;
+}
+
+.api-row input {
+  flex: 1;
+}
+
+/* 답변 영역 */
+.answer-area {
+  margin-top: 12px;
+}
+
+.answer-label {
+  font-size: 11px;
+  color: #03C75A;
+  font-weight: 700;
+  margin-bottom: 6px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.answer-text {
+  background: #111;
+  border: 1px solid #2A2A2A;
+  border-radius: 6px;
+  padding: 12px;
+  font-size: 12px;
+  color: #DDD;
+  line-height: 1.7;
+  max-height: 200px;
+  overflow-y: auto;
+  white-space: pre-wrap;
+  word-break: break-word;
+}
+
+.answer-actions {
+  display: flex;
+  gap: 8px;
+  margin-top: 8px;
+}
+
+.answer-actions .btn {
+  flex: 1;
+}
+
+/* 상태 메시지 */
+.error-msg {
+  margin-top: 8px;
+  padding: 8px 10px;
+  background: rgba(255, 68, 68, 0.1);
+  border: 1px solid rgba(255, 68, 68, 0.3);
+  border-radius: 6px;
+  color: #FF4444;
+  font-size: 12px;
+}
+
+.success-msg {
+  margin-top: 8px;
+  padding: 6px 10px;
+  color: #03C75A;
+  font-size: 12px;
+  text-align: center;
+}
+
+.status-msg {
+  margin-top: 8px;
+  padding: 8px 10px;
+  background: rgba(3, 199, 90, 0.08);
+  border-radius: 6px;
+  color: #AAA;
+  font-size: 12px;
+  text-align: center;
+}
+
+/* 유틸리티 */
+.hidden {
+  display: none !important;
+}
+
+/* 스크롤바 */
+::-webkit-scrollbar {
+  width: 4px;
+}
+
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #333;
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #555;
+}
+
+/* 로딩 애니메이션 */
+@keyframes pulse {
+  0%, 100% { opacity: 0.6; }
+  50% { opacity: 1; }
+}
+
+.loading {
+  animation: pulse 1.5s ease-in-out infinite;
+}
