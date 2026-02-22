@@ -1,24 +1,32 @@
 <!DOCTYPE html>
-<html lang="ko">
+<html lang="ko" data-theme="dark">
 <head>
   <meta charset="UTF-8">
   <link rel="stylesheet" href="popup.css">
 </head>
 <body>
   <div class="container">
-    <!-- 헤더 -->
-    <header class="header">
-      <h1 class="header-title">지식인 답변 생성기</h1>
-      <p class="header-sub">네이버 지식인 질문 분석 &amp; 답변 자동 생성</p>
+    <!-- 다크모드 토글 -->
+    <button id="btnTheme" class="theme-toggle" title="테마 전환">
+      <span class="theme-icon">&#9728;&#65039;</span>
+    </button>
+
+    <!-- 히어로 섹션 -->
+    <header class="hero">
+      <div class="hero-logo">
+        <img src="icons/icon128.png" alt="Q" class="hero-logo-img">
+      </div>
+      <h1 class="hero-title">지식인 답변 생성기</h1>
+      <p class="hero-sub">Developed by 화창하다</p>
     </header>
+
+    <div class="divider"></div>
 
     <!-- 상품 선택 섹션 -->
     <section class="card">
       <div class="card-header">내 상품 목록</div>
-      <div id="productChips" class="product-chips">
-        <!-- JS로 동적 생성 -->
-      </div>
-      <div class="product-chips-empty hidden" id="emptyMsg">저장된 상품이 없습니다. 아래에서 추가하세요.</div>
+      <div id="productChips" class="product-chips"></div>
+      <div class="product-chips-empty hidden" id="emptyMsg">저장된 상품이 없습니다</div>
     </section>
 
     <!-- 답변 생성 -->
@@ -36,7 +44,7 @@
       <div id="generateError" class="error-msg hidden"></div>
     </section>
 
-    <!-- 상품 추가/수정 섹션 (접이식) -->
+    <!-- 상품 추가/수정 (접이식) -->
     <section class="card">
       <button id="btnToggleForm" class="btn btn-secondary btn-full">+ 상품 추가</button>
       <div id="productForm" class="product-form hidden">
@@ -62,13 +70,20 @@
 
     <!-- API 키 설정 -->
     <section class="card card-settings">
-      <div class="card-header">Gemini API 키</div>
+      <div class="card-header">Gemini API Key</div>
       <div class="api-row">
         <input type="password" id="apiKey" placeholder="API 키를 입력하세요">
-        <button id="btnSaveApi" class="btn btn-small">저장</button>
+        <button id="btnSaveApi" class="btn btn-save">저장</button>
       </div>
-      <div id="apiStatus" class="success-msg hidden">API 키 저장됨</div>
+      <div id="apiStatus" class="success-msg hidden">API 키가 저장되어 있습니다</div>
     </section>
+
+    <!-- 푸터 -->
+    <footer class="footer">
+      <div class="footer-divider"></div>
+      <p class="footer-text">지식인 답변 생성기</p>
+      <p class="footer-powered">Developed by 화창하다</p>
+    </footer>
   </div>
 
   <script src="popup.js"></script>

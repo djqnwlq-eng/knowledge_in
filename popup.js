@@ -4,6 +4,8 @@
   'use strict';
 
   // DOM 요소
+  const btnTheme = document.getElementById('btnTheme');
+  const themeIcon = btnTheme.querySelector('.theme-icon');
   const productChips = document.getElementById('productChips');
   const emptyMsg = document.getElementById('emptyMsg');
   const btnToggleForm = document.getElementById('btnToggleForm');
@@ -36,6 +38,12 @@
   init();
 
   async function init() {
+    // 테마 복원
+    chrome.storage.local.get(['theme'], (r) => {
+      const theme = r.theme || 'dark';
+      applyTheme(theme);
+    });
+
     // 저장된 데이터 불러오기
     chrome.storage.local.get(['products', 'selected_product_id', 'gemini_api_key'], (result) => {
       // 기존 단일 상품 데이터 마이그레이션
@@ -64,6 +72,7 @@
     });
 
     // 이벤트 바인딩
+    btnTheme.addEventListener('click', toggleTheme);
     btnToggleForm.addEventListener('click', handleToggleForm);
     btnSaveProduct.addEventListener('click', handleSaveProduct);
     btnDeleteProduct.addEventListener('click', handleDeleteProduct);
@@ -465,6 +474,19 @@ ${question.content}
       btnCopy.textContent = '복사됨!';
       setTimeout(() => { btnCopy.textContent = '복사하기'; }, 1500);
     }
+  }
+
+  // --- 테마 ---
+  function applyTheme(theme) {
+    document.documentElement.setAttribute('data-theme', theme);
+    themeIcon.textContent = theme === 'dark' ? '\u2600\uFE0F' : '\uD83C\uDF19';
+  }
+
+  function toggleTheme() {
+    const current = document.documentElement.getAttribute('data-theme') || 'dark';
+    const next = current === 'dark' ? 'light' : 'dark';
+    applyTheme(next);
+    chrome.storage.local.set({ theme: next });
   }
 
   // --- 유틸 ---
