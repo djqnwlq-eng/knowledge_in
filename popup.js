@@ -258,15 +258,33 @@
       }
     } catch (e) {}
 
-    // 방법 3: 직접 함수 실행 (확장 셀렉터 + 휴리스틱)
+    // 방법 3: 직접 함수 실행 (확장 셀렉터 + 답변 영역 제외)
     try {
       const results = await chrome.scripting.executeScript({
         target: { tabId: tab.id },
         func: () => {
+          // 답변 영역 셀렉터
+          const ANSWER_SELS = [
+            '.answer-content', '.answer_area', '.answerDetail',
+            '.answer_detail', '.c-heading-answer',
+            '.c-heading._answerContentsArea', '._answerArea',
+            '.answer', '[class*="answer"]', '.reply_area',
+            '.reply_content', '.best_answer', '.adoptDetail',
+          ];
+
+          function isAnswerArea(el) {
+            for (const s of ANSWER_SELS) {
+              if (el.closest(s)) return true;
+            }
+            return false;
+          }
+
           function q(sels) {
             for (const s of sels) {
-              const el = document.querySelector(s);
-              if (el && el.textContent.trim().length > 0) return el;
+              const els = document.querySelectorAll(s);
+              for (const el of els) {
+                if (el.textContent.trim().length > 0 && !isAnswerArea(el)) return el;
+              }
             }
             return null;
           }
@@ -289,23 +307,29 @@
           }
 
           const contentEl = q([
-            '.c-heading__content', '._questionContentsArea',
+            '.c-heading._questionContentsArea .c-heading__content',
+            '.question_area .c-heading__content',
+            '.questionDetail .c-heading__content',
+            '.c-heading__content',
+            '._questionContentsArea',
             '.question-content', '.question-content-area',
-            '.questionDetail .se-main-container', '.endContentBody',
-            '.end_content', '._endContents', '.detail_content',
-            '.se-main-container', '#content .c-heading__content',
+            '.questionDetail .se-main-container',
+            '.endContentBody', '.end_content', '._endContents',
+            '.detail_content', '.question_content',
           ]);
           let content = contentEl?.innerText?.trim() || '';
 
+          // 휴리스틱 폴백 (질문 영역만, #content 제외)
           if (!content) {
             const wrappers = ['.questionDetail', '.question-area',
-              '.question_area', '.c-heading', '#content'];
+              '.question_area', '.c-heading._questionContentsArea'];
             for (const ws of wrappers) {
               const w = document.querySelector(ws);
               if (!w) continue;
               let best = '';
               for (const el of w.querySelectorAll('div, p, span')) {
                 if (el.children.length > 10) continue;
+                if (isAnswerArea(el)) continue;
                 const t = el.innerText?.trim() || '';
                 if (t.length > best.length && t.length < 5000) best = t;
               }
@@ -407,13 +431,33 @@ ${question.content}
 [작성 규칙]
 - 전체 길이는 3~4줄 내외로 짧고 강렬하게 작성할 것.
 - 구조: [공감 및 원인 분석] -> [질문 답변 및 주의사항] -> [내 상품 해결책 제안] -> [증상이 심하면 병원/전문의 상담 권유].
+- 첫 문장 작성 시 반드시 질문 원문을 정확히 읽고, 질문자가 실제로 묻고 있는 핵심 의도를 파악할 것.
+- 질문에 언급되지 않은 내용(피곤, 스트레스, 면역력 등)을 임의로 추측하여 넣지 말 것. 질문 원문에 있는 키워드와 상황만 활용할 것.
+- 첫 문장에 "아이고", "어머", "세상에", "헉" 같은 가벼운 감탄사를 사용하지 말 것. 바로 본론으로 들어갈 것.
+- 첫 문장은 질문 유형에 맞게 시작할 것:
+  · "왜 이런 건가요?" 류의 원인 질문 → 바로 원인/이유를 설명하며 시작
+  · "어떻게 하나요?" 류의 방법 질문 → 상황 공감 후 관리법 제시
+  · "이거 괜찮나요?" 류의 확인 질문 → 불안감 공감 후 판단 제시
+  · "추천해주세요" 류의 요청 질문 → 니즈 파악 후 제안
+  위 예시는 참고용이며 그대로 복사하지 말고, 질문 내용에 맞게 자연스럽게 변형할 것.
 - 상품을 추천할 때 반드시 위에 명시된 "제품명"을 정확히 사용하여 자연스럽게 언급할 것.
+- 상품 특장점에 여러 가지가 나열되어 있더라도, 질문 내용과 가장 관련 있는 특징 1~2가지만 골라서 언급할 것. 매번 다른 특징을 선택해서 답변이 다양해지도록 할 것.
 - '광고' 느낌을 지우기 위해 "이런 성분이 든 제품이 도움 됩니다" 또는 "연고보다는 자극이 적은 전용 제품을 사용하는 것이 장기적으로 훨씬 안전합니다"라는 식의 추천 어투를 사용할 것.
 - 너무 어려운 전문 용어는 피하고, 꼭 필요한 경우 쉬운 설명을 덧붙일 것.
 - 숫자로 단락을 나누지 말고, 대본처럼 문장과 문장을 자연스럽게 이어서 작성할 것.
 - 결론부터 직관적으로 말하고 중립적이면서도 확신에 찬 어조를 유지할 것.
-- 마지막 문장은 반드시 "증상이 심해지면 병원이나 전문의 상담을 받아보시는 것을 추천드립니다" 류의 마무리 멘트로 끝낼 것.
+- 마지막 문장은 병원 또는 전문의 상담을 권유하는 마무리 멘트로 끝내되, 매번 표현을 다르게 바꿔서 작성할 것. 예시처럼 다양하게 변형하되 이 예시를 그대로 복사하지 말고 매번 새롭게 표현할 것:
+  예) "증상이 지속된다면 가까운 피부과에서 정확한 진단을 받아보시는 게 좋겠습니다"
+  예) "호전이 없으시면 전문의 진료도 함께 고려해보세요"
+  예) "오래 지속되는 경우라면 한번쯤 병원에서 체크받아 보시길 권해드려요"
+  예) "심하게 느껴지신다면 전문가 상담도 병행하시면 더 안심이 되실 거예요"
 - "광고", "협찬", "홍보" 같은 표현은 절대 사용 금지.
+
+[문체 규칙]
+- 문장 끝맺음을 ~요, ~죠, ~습니다, ~다, ~거든요, ~세요, ~해요, ~됩니다 등 다양하게 섞어서 사용할 것.
+- 같은 어미를 연속으로 2번 이상 반복하지 말 것. 예를 들어 "~좋아요. ~많아요. ~돼요." 처럼 "~요"가 연속 3번 나오면 안 됨.
+- 실제 지식인에서 답변하는 사람처럼 자연스러운 구어체를 사용할 것.
+- 딱딱한 설명문이 아니라, 대화하듯 편하게 쓸 것.
 
 [절대 금지]
 - 상품 링크(URL)를 답변에 포함하는 것
@@ -435,7 +479,8 @@ ${question.content}
         contents: [{ parts: [{ text: prompt }] }],
         generationConfig: {
           temperature: 0.75,
-          maxOutputTokens: 2048
+          maxOutputTokens: 8192,
+          thinkingConfig: { thinkingBudget: 0 }
         }
       })
     });
@@ -448,7 +493,11 @@ ${question.content}
 
     const data = await response.json();
     if (!data.candidates?.[0]) throw new Error('응답 없음. 다시 시도하세요.');
-    return data.candidates[0].content.parts[0].text;
+    const candidate = data.candidates[0];
+    const parts = candidate.content?.parts || [];
+    const text = parts.map(p => p.text || '').join('').trim();
+    if (!text) throw new Error('빈 응답입니다. 다시 시도하세요.');
+    return text;
   }
 
   // --- 복사 ---
