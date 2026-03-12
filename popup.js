@@ -405,6 +405,7 @@
       answerText.textContent = answer;
       showEl(answerArea);
       hideEl(generateStatus);
+      answerArea.scrollIntoView({ behavior: 'smooth', block: 'start' });
     } catch (e) {
       hideEl(generateStatus);
       showError(generateError, e.message);

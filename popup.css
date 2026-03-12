@@ -56,7 +56,8 @@
 
 body {
   width: 440px;
-  max-height: 600px;
+  min-height: 500px;
+  max-height: 800px;
   overflow-y: auto;
   background: var(--bg);
   color: var(--text);
@@ -374,8 +375,7 @@ textarea {
   font-size: 13px;
   color: var(--text);
   line-height: 1.7;
-  max-height: 200px;
-  overflow-y: auto;
+  max-height: none;
   white-space: pre-wrap;
   word-break: break-word;
 }
