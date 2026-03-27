@@ -27,7 +27,15 @@
 
   const apiKeyInput = document.getElementById('apiKey');
   const btnSaveApi = document.getElementById('btnSaveApi');
-  const apiStatus = document.getElementById('apiStatus');
+  const btnDeleteApi = document.getElementById('btnDeleteApi');
+  const btnOpenApiModal = document.getElementById('btnOpenApiModal');
+  const btnCloseModal = document.getElementById('btnCloseModal');
+  const apiModal = document.getElementById('apiModal');
+  const apiStatusBadge = document.getElementById('apiStatusBadge');
+  const apiModalStatus = document.getElementById('apiModalStatus');
+  const btnToggleApiKey = document.getElementById('btnToggleApiKey');
+  const btnAccordion = document.getElementById('btnAccordion');
+  const accordionBody = document.getElementById('accordionBody');
 
   // 상태
   let products = [];         // {id, name, link, features}[]
@@ -68,7 +76,12 @@
         renderChips();
       }
 
-      if (result.gemini_api_key) apiKeyInput.value = result.gemini_api_key;
+      if (result.gemini_api_key) {
+        apiKeyInput.value = result.gemini_api_key;
+        updateApiStatusUI(true);
+      } else {
+        updateApiStatusUI(false);
+      }
     });
 
     // 이벤트 바인딩
@@ -81,8 +94,19 @@
     btnCopy.addEventListener('click', handleCopy);
     btnRegenerate.addEventListener('click', handleGenerate);
     btnSaveApi.addEventListener('click', handleSaveApiKey);
-    apiKeyInput.addEventListener('input', () => {
-      chrome.storage.local.set({ gemini_api_key: apiKeyInput.value.trim() });
+    btnDeleteApi.addEventListener('click', handleDeleteApiKey);
+    btnOpenApiModal.addEventListener('click', () => showEl(apiModal));
+    btnCloseModal.addEventListener('click', () => hideEl(apiModal));
+    apiModal.addEventListener('click', (e) => {
+      if (e.target === apiModal) hideEl(apiModal);
+    });
+    btnToggleApiKey.addEventListener('click', () => {
+      const isPassword = apiKeyInput.type === 'password';
+      apiKeyInput.type = isPassword ? 'text' : 'password';
+    });
+    btnAccordion.addEventListener('click', () => {
+      btnAccordion.classList.toggle('open');
+      accordionBody.classList.toggle('hidden');
     });
   }
 
@@ -221,11 +245,36 @@
   function handleSaveApiKey() {
     const key = apiKeyInput.value.trim();
     if (!key) {
-      flashMsg(apiStatus, 'API 키를 입력해주세요');
+      apiKeyInput.focus();
       return;
     }
     chrome.storage.local.set({ gemini_api_key: key }, () => {
-      flashMsg(apiStatus, 'API 키 저장됨');
+      updateApiStatusUI(true);
+      hideEl(apiModal);
+    });
+  }
+
+  // --- API 키 삭제 ---
+  function handleDeleteApiKey() {
+    apiKeyInput.value = '';
+    chrome.storage.local.remove('gemini_api_key', () => {
+      updateApiStatusUI(false);
+    });
+  }
+
+  // --- API 상태 UI 업데이트 ---
+  function updateApiStatusUI(hasKey) {
+    const badgeElements = [apiStatusBadge, apiModalStatus];
+    badgeElements.forEach(badge => {
+      const dot = badge.querySelector('.status-dot');
+      const text = badge.querySelector('span:last-child');
+      if (hasKey) {
+        dot.className = 'status-dot green';
+        text.textContent = 'API 키가 설정되어 있습니다';
+      } else {
+        dot.className = 'status-dot red';
+        text.textContent = 'API 키가 설정되지 않았습니다';
+      }
     });
   }
 
